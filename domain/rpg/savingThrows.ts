@@ -1,5 +1,13 @@
 import { WithHasProficiency, withHasProficiency } from "./skill";
-import { compose, map, encapsulate } from "../fp/pureFunctions";
+import {
+  compose,
+  map,
+  encapsulate,
+  join,
+  mergeJoin,
+  set,
+  trace
+} from "../fp/pureFunctions";
 import { Field, withValue, withName, withCollectionOf } from "./property";
 import { AbilityScoresType } from "./abilityScore";
 
@@ -16,11 +24,17 @@ export const createSavingThrow = compose(
 );
 
 export const setDefaultSavingThrows = compose(
-  compose(createSavingThrow, encapsulate("name")),
-  Object.keys
+  mergeJoin,
+  join(
+    compose(
+      set("savingThrows"),
+      map(compose(createSavingThrow, encapsulate("name"))),
+      Object.keys
+    )(AbilityScoresType)
+  )
 );
 
 export const withSavingThrows = compose(
-  // setDefaultSavingThrows(AbilityScoresType),
+  setDefaultSavingThrows,
   withCollectionOf("savingThrows", createSavingThrow, 6)
 );
