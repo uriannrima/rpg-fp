@@ -10,7 +10,7 @@ import {
   withCollectionOf
 } from "./property";
 import { Creator } from "../fp/base";
-import { compose, set, map } from "../fp/pureFunctions";
+import { compose, set, map, mergeJoin, join } from "../fp/pureFunctions";
 import { WithModifiers, getModifiersTotal, withModifiers } from "./modifier";
 
 export enum FiveEditionSkillsType {
@@ -204,11 +204,11 @@ export const createSkill: Creator<Skill> = compose(
 export const with35Skills = withCollectionOf("skills", create35Skill, 5);
 
 export const setDefaultSkills = compose(
-  set("skills"),
-  map(createSkill)(SkillsDefinitions)
+  mergeJoin,
+  join(compose(set("skills"), map(createSkill))(SkillsDefinitions))
 );
 
 export const withSkills = compose(
-  // setDefaultSkills,
+  setDefaultSkills,
   withCollectionOf("skills", createSkill, 5)
 );
