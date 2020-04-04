@@ -8,8 +8,9 @@ import {
   set,
   trace
 } from "../fp/pureFunctions";
-import { Field, withValue, withName, withCollectionOf } from "./property";
+import { Field, withValue, withName, withCollectionOf } from "../fp/property";
 import { AbilityScoresType } from "./abilityScore";
+import { Creator } from "../fp/base";
 
 export interface SavingThrow extends Field<number>, WithHasProficiency {}
 
@@ -17,7 +18,7 @@ export interface WithSavingThrows {
   savingThrows: SavingThrow[];
 }
 
-export const createSavingThrow = compose(
+export const createSavingThrow: Creator<SavingThrow> = compose(
   withHasProficiency,
   withValue,
   withName
@@ -36,5 +37,7 @@ export const setDefaultSavingThrows = compose(
 
 export const withSavingThrows = compose(
   setDefaultSavingThrows,
-  withCollectionOf("savingThrows", createSavingThrow, 6)
+  withCollectionOf<SavingThrow, WithSavingThrows>("savingThrows")(
+    createSavingThrow
+  )(6)
 );

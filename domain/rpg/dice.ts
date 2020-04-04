@@ -1,4 +1,4 @@
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 import { Creator } from "../fp/base";
 import { compose } from "../fp/pureFunctions";
 
@@ -9,7 +9,7 @@ export interface Dice {
 const diceToString = ({ faces }: Dice) => `d${faces}`;
 
 export const createDice: Creator<Dice> = compose(
-  withProperty("valueOf", diceToString),
-  withProperty("toString", diceToString),
-  withProperty("faces", 1)
+  withProperty("valueOf")(diceToString),
+  withProperty("toString")(diceToString),
+  withProperty("faces")(1)
 );

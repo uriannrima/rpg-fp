@@ -2,7 +2,7 @@ import { compose } from "../fp/pureFunctions";
 import { WithSkills, withSkills } from "./skill";
 import { WithSavingThrows, withSavingThrows } from "./savingThrows";
 import { WithAbilityScores, withAbilityScores } from "./abilityScore";
-import { WithName, withName, withProperty } from "./property";
+import { WithName, withName } from "../fp/property";
 import { WithProficiencyBonus, withProficiencyBonus } from "./proficiencyBonus";
 import { Creator } from "../fp/base";
 import { WithArmorClass, withArmorClass } from "./armorClass";
@@ -15,7 +15,7 @@ import { WithHitDice, withHitDice } from "./hitDice";
 import { WithDeathSaves, withDeathSaves } from "./deathSaves";
 import { WithDescriptions, withDescriptions } from "./descriptions";
 import { WithClasses, withClasses } from "./class";
-import { getName } from "../fp/getters";
+import { withProficiencies, WithProficiencies } from "./proficiency";
 
 interface Character
   extends WithName,
@@ -32,9 +32,11 @@ interface Character
     WithHitDice,
     WithDeathSaves,
     WithDescriptions,
-    WithClasses {}
+    WithClasses,
+    WithProficiencies {}
 
 export const createCharacter: Creator<Character> = compose(
+  withProficiencies,
   withClasses,
   withDescriptions,
   withDeathSaves,

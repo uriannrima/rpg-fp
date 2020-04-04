@@ -1,4 +1,4 @@
-import { Field, withField, withCollectionOf } from "./property";
+import { Field, withField, withCollectionOf } from "../fp/property";
 import { Creator } from "../fp/base";
 import { findByProperty } from "./filters";
 import {
@@ -45,7 +45,9 @@ export const setDefaultAbilityScores = compose(
 
 export const withAbilityScores = compose(
   setDefaultAbilityScores,
-  withCollectionOf("abilityScores", createAbilityScore, 6)
+  withCollectionOf<AbilityScore, WithAbilityScores>("abilityScores")(
+    createAbilityScore
+  )(6)
 );
 
 export const findAbilityScoreByName = findByProperty<

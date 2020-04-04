@@ -1,5 +1,5 @@
 import { compose } from "../fp/pureFunctions";
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 import { Creator } from "../fp/base";
 
 export interface HitDice {
@@ -8,12 +8,12 @@ export interface HitDice {
 }
 
 export const createHitDice: Creator<HitDice> = compose(
-  withProperty("remaining", 1),
-  withProperty("maximum", 1)
+  withProperty("remaining")(1),
+  withProperty("maximum")(1)
 );
 
 export interface WithHitDice {
   hitDice: HitDice;
 }
 
-export const withHitDice = withProperty("hitDice", createHitDice());
+export const withHitDice = withProperty("hitDice")(createHitDice());

@@ -1,5 +1,5 @@
 import { compose } from "../fp/pureFunctions";
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 import { Creator } from "../fp/base";
 
 export interface Hitpoints {
@@ -9,13 +9,13 @@ export interface Hitpoints {
 }
 
 export const createHitpoints: Creator<Hitpoints> = compose(
-  withProperty("maximum", 0),
-  withProperty("current", 0),
-  withProperty("temporary", 0)
+  withProperty("maximum")(0),
+  withProperty("current")(0),
+  withProperty("temporary")(0)
 );
 
 export interface WithHitpoints {
   hitPoints: Hitpoints;
 }
 
-export const withHitpoints = withProperty("hitPoints", createHitpoints());
+export const withHitpoints = withProperty("hitPoints")(createHitpoints());

@@ -1,4 +1,4 @@
-import { Field, withField, withCollectionOf } from "./property";
+import { Field, withField, withCollectionOf } from "../fp/property";
 import { Creator } from "../fp/base";
 import { getPropertyTotal, getValue } from "../fp/getters";
 import { sumReduce } from "../fp/pureFunctions";
@@ -11,7 +11,7 @@ export interface WithModifiers {
 
 export const createModifier: Creator<Modifier> = withField;
 
-export const withModifiers = withCollectionOf("modifiers", createModifier);
+export const withModifiers = withCollectionOf("modifiers")(createModifier);
 
 export const getModifiersTotal: (entity: any) => number = getPropertyTotal(
   "modifiers",

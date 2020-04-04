@@ -7,8 +7,9 @@ import {
   withProperty,
   withDescription,
   withName,
-  withCollectionOf
-} from "./property";
+  withCollectionOf,
+  withFunction
+} from "../fp/property";
 import { Creator } from "../fp/base";
 import { compose, set, map, mergeJoin, join } from "../fp/pureFunctions";
 import { WithModifiers, getModifiersTotal, withModifiers } from "./modifier";
@@ -165,27 +166,25 @@ export interface Skill35
   getTotal(): number;
 }
 
-export const createSubType: Creator<SubType> = withField;
+export const createSubType: Creator<SubType> = compose(withField);
 
-export const withIsClassSkill = withProperty("isClassSkill", false);
+export const withIsClassSkill = withProperty("isClassSkill")(false);
 
-export const withIsUntrainedSkill = withProperty("isUntrainedSkill", false);
+export const withIsUntrainedSkill = withProperty("isUntrainedSkill")(false);
 
-export const withHasProficiency = withProperty("hasProficiency", false);
+export const withHasProficiency = withProperty("hasProficiency")(false);
 
-export const withHasArmorCheckPenalty = withProperty(
-  "hasArmorCheckPenalty",
+export const withHasArmorCheckPenalty = withProperty("hasArmorCheckPenalty")(
   false
 );
 
-export const withKeyAbilityScore = withProperty(
-  "keyAbilityScore",
+export const withKeyAbilityScore = withProperty("keyAbilityScore")(
   AbilityScoresType.Strength
 );
 
 export const create35Skill: Creator<Skill35> = compose(
-  withProperty("getTotal", getModifiersTotal),
-  withProperty("subType", createSubType()),
+  withFunction("getTotal")(getModifiersTotal),
+  // withProperty("subType")(createSubType()),
   withModifiers(3),
   withHasArmorCheckPenalty,
   withIsUntrainedSkill,
@@ -201,7 +200,7 @@ export const createSkill: Creator<Skill> = compose(
   withField
 );
 
-export const with35Skills = withCollectionOf("skills", create35Skill, 5);
+export const with35Skills = withCollectionOf("skills")(create35Skill)(5);
 
 export const setDefaultSkills = compose(
   mergeJoin,
@@ -210,5 +209,5 @@ export const setDefaultSkills = compose(
 
 export const withSkills = compose(
   setDefaultSkills,
-  withCollectionOf("skills", createSkill, 5)
+  withCollectionOf<Skill, WithSkills>("skills")(createSkill)(5)
 );

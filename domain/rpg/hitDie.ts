@@ -1,8 +1,8 @@
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 import { Dice, createDice } from "./dice";
 
 export interface WithHitDie {
   hitDie: Dice;
 }
 
-export const withHitDie = withProperty("hitDie", createDice());
+export const withHitDie = withProperty("hitDie")(createDice());

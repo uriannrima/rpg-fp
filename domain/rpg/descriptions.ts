@@ -1,4 +1,4 @@
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 import { compose } from "../fp/pureFunctions";
 
 export interface WithPersonalityTrait {
@@ -23,10 +23,10 @@ export interface WithDescriptions
     WithBonds,
     WithFlaws {}
 
-export const withPersonalityTrait = withProperty("personalityTrait", "");
-export const withIdeals = withProperty("ideals", "");
-export const withBonds = withProperty("bonds", "");
-export const withFlaws = withProperty("flaws", "");
+export const withPersonalityTrait = withProperty("personalityTrait")("");
+export const withIdeals = withProperty("ideals")("");
+export const withBonds = withProperty("bonds")("");
+export const withFlaws = withProperty("flaws")("");
 
 export const withDescriptions = compose(
   withPersonalityTrait,

@@ -1,7 +1,7 @@
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 
 export interface WithInspiration {
   inspiration: number;
 }
 
-export const withInspiration = withProperty("inspiration", 0);
+export const withInspiration = withProperty("inspiration")(0);

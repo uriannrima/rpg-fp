@@ -1,60 +1,77 @@
-import { createCharacter } from "./domain/rpg/character";
-import { FiveEditionSkillsType as SkillType } from "./domain/rpg/skill";
-import { AbilityScoresType } from "./domain/rpg/abilityScore";
-import { setAbilityScores, setProficiencyTo } from "./domain/fp/setters";
-import { createHitpoints } from "./domain/rpg/hitPoints";
-import { ClassType, setClass } from "./domain/rpg/class";
+import R from "ramda";
 
-const character = createCharacter({
-  name: "Uriann",
-  proficiencyBonus: 2,
-  armorClass: 9,
-  speed: "25ft",
-  fate: 1,
-  inspiration: 1,
-  hitPoints: createHitpoints({
-    maximum: 10,
-    current: 10,
-    temporary: 0
-  })
+interface Person {
+  age?: number;
+  weight: number;
+  height: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const expect = (value, debug = false) => ({
+  toEqual: (toCheck): boolean => {
+    debug && console.log({ value, toCheck });
+
+    if (value === toCheck) {
+      return true;
+    } else {
+      throw new Error(`Expected '${value}' to equals '${toCheck}'.`);
+    }
+  },
 });
 
-setProficiencyTo<AbilityScoresType>([
-  AbilityScoresType.Wisdom,
-  AbilityScoresType.Charisma
-])(character.savingThrows);
+const setAge = (age: number) => (p: { age: number }): { age: number } => ({
+  ...p,
+  age,
+});
 
-setProficiencyTo<SkillType>([SkillType.Religion, SkillType.Insight])(
-  character.skills
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+(function testSetAge() {
+  const p: { age: number } = {
+    age: 1,
+  };
+
+  const p2 = setAge(12)(p);
+  expect(p2.age).toEqual(12);
+})();
+
+const getHalvedAge = (p: { age: number }): number => p.age / 2;
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+(function testeGetHalvedAge() {
+  const p: { age: number } = {
+    age: 2,
+  };
+
+  const hAge = getHalvedAge(p);
+  expect(hAge).toEqual(1);
+})();
+
+const setToHalvedAge = R.compose(setAge, getHalvedAge);
+
+type Composer<P, R> = <TP extends P, TR extends R>(p: TP) => TR;
+// type Composer<P, R> = (p: P) => R;
+
+const halveAge: Composer<{ age: number }, { age: number }> = R.converge(
+  R.call,
+  [setToHalvedAge, R.identity]
 );
 
-setAbilityScores([
-  {
-    name: AbilityScoresType.Strength,
-    value: 14
-  },
-  {
-    name: AbilityScoresType.Dexterity,
-    value: 9
-  },
-  {
-    name: AbilityScoresType.Constitution,
-    value: 15
-  },
-  {
-    name: AbilityScoresType.Intelligence,
-    value: 11
-  },
-  {
-    name: AbilityScoresType.Wisdom,
-    value: 16
-  },
-  {
-    name: AbilityScoresType.Charisma,
-    value: 13
-  }
-])(character);
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+(function testeHalveAge() {
+  const { age } = halveAge({
+    age: 10,
+  });
 
-setClass(ClassType.Druid)(character.classes);
+  expect(age).toEqual(5);
+})();
 
-console.log({ character }, character.abilityScores);
+const p2: Person = {
+  age: 1,
+  height: 175,
+  weight: 90,
+};
+
+// const p3 = halveAge(p2);
+const p4: Person = halveAge(p2);
+
+console.log({ p4 });

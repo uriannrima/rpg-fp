@@ -1,7 +1,7 @@
-import { withProperty } from "./property";
+import { withProperty } from "../fp/property";
 
 export interface WithInitiative {
   initiative: number;
 }
 
-export const withInitiative = withProperty("initiative", 0);
+export const withInitiative = withProperty("initiative")(0);
