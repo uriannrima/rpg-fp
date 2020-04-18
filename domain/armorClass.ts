@@ -1,17 +1,38 @@
 import { add, pipe } from "ramda";
 
 import {
-  getAbilityScore,
   AbilityScoreType,
-  getAbilityScores,
+  WithAbilityScores,
+  getAbilityScoreModifier,
 } from "./abilityScore";
-import { getModifier } from "./utils/number";
-import { getValue } from "./interfaces/WithValue";
 
-export const getArmorClass = pipe(
-  getAbilityScores,
-  getAbilityScore(AbilityScoreType.Dexterity),
-  getValue,
-  getModifier,
-  add(10)
-);
+import {
+  WithEquipments,
+  getArmorFromEquipments,
+  getShieldFromEquipments,
+  getArmorClassFromArmor,
+  getBonusArmorFromShield,
+} from "./equipment/equipment";
+
+const BASE_ARMOR_CLASS = 10;
+
+export const getBaseArmorClass = (modifier: number): number =>
+  add(BASE_ARMOR_CLASS)(modifier);
+
+export const getArmorClass = (armorAbilityScore: AbilityScoreType) => (
+  character: WithAbilityScores & WithEquipments
+): number => {
+  const modifier = getAbilityScoreModifier(armorAbilityScore)(character);
+
+  const baseArmorClass = pipe(
+    getArmorFromEquipments,
+    getArmorClassFromArmor(modifier)
+  )(character);
+
+  const shieldBonusArmor = pipe(
+    getShieldFromEquipments,
+    getBonusArmorFromShield
+  )(character);
+
+  return add(baseArmorClass)(shieldBonusArmor);
+};

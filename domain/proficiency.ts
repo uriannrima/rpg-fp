@@ -24,9 +24,11 @@ export interface WithType<TType> {
   type: TType;
 }
 
-export const isType = <TType>(type: TType) => (
-  entry: WithType<TType>
-): boolean => entry.type === type;
+export const getType = <TType>({ type }: WithType<TType>): TType => type;
+
+export const isType = <TType>(toCompare: TType) => ({
+  type,
+}: WithType<TType>): boolean => type === toCompare;
 
 export interface Proficiency extends WithName, WithType<ProficiencyType> {}
 

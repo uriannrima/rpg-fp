@@ -7,6 +7,10 @@ import {
 import { SkillType, getSkills } from "./domain/skill";
 import { getSavingThrows } from "./domain/savingThrow";
 import { getArmorClass } from "./domain/armorClass";
+import {
+  setEquipments,
+  EXAMPLE_EQUIPMENTS,
+} from "./domain/equipment/equipment";
 
 const c = createCharacter({
   name: "Uriann",
@@ -23,7 +27,8 @@ setProficiencyToMap([AbilityScoreType.Wisdom, AbilityScoreType.Charisma])(
 //   )
 // )(c);
 
-updateAbilityScore(AbilityScoreType.Dexterity)(14)(c);
+updateAbilityScore(AbilityScoreType.Dexterity)(16)(c);
+setEquipments(EXAMPLE_EQUIPMENTS)(c);
 
 console.log(
   // { c },
@@ -35,5 +40,6 @@ console.log(
   // proficientSavingThrow,
   // c.abilityScores[AbilityScoreType.Charisma],
   c.abilityScores.dexterity,
-  getArmorClass(c)
+  c.equipments,
+  getArmorClass(AbilityScoreType.Dexterity)(c)
 );
