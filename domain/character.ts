@@ -1,12 +1,24 @@
-import { pipe } from "ramda";
+import * as R from "ramda";
 
-import { Creator } from "./creators";
 import { WithName, withName } from "./interfaces/WithName";
 import { withDefaultAbilityScores, WithAbilityScores } from "./abilityScore";
 
-interface Character extends WithName, WithAbilityScores {}
+import { Creator } from "./creators";
+import { withDefaultSavingThrows, WithSavingThrows } from "./savingThrow";
+import { withClasses, WithClasses } from "./class";
+import { WithSkills, withDefaultSkills } from "./skill";
 
-export const createCharacter: Creator<Character> = pipe(
+export interface Character
+  extends WithName,
+    WithAbilityScores,
+    WithSavingThrows,
+    WithClasses,
+    WithSkills {}
+
+export const createCharacter: Creator<Character> = R.pipe(
   withName,
-  withDefaultAbilityScores(10)
+  withDefaultAbilityScores(10),
+  withDefaultSavingThrows(0),
+  withClasses([]),
+  withDefaultSkills(0)
 );

@@ -1,10 +1,13 @@
 import { pipe } from "ramda";
 
 import { WithName, withName } from "./interfaces/WithName";
-import { WithValue, withValue } from "./interfaces/WithValue";
+import { WithValue, withValue, getValue } from "./interfaces/WithValue";
 
 import { merge } from "./property";
 import { Creator } from "./creators";
+import { getModifier } from "./utils/computations";
+
+/** Types & Interfaces */
 
 export interface AbilityScore extends WithName, WithValue<number> {}
 
@@ -21,28 +24,56 @@ export type AbilityScoreMap = {
   [key in keyof typeof AbilityScoreType]: AbilityScore;
 };
 
+export type AbilityScoreDictionary = {
+  [key: string]: AbilityScore;
+};
+
+export type AbilityScores = AbilityScoreMap & AbilityScoreDictionary;
+
 export interface WithAbilityScores {
-  abilityScores: AbilityScoreMap;
+  abilityScores: AbilityScores;
 }
 
-export const withAbilityScores = (abilityScores: AbilityScoreMap) =>
-  pipe(
-    merge<WithAbilityScores>({ abilityScores })
-  );
+/** Creators */
 
 export const createAbilityScore: Creator<AbilityScore> = pipe(
   withName,
   withValue(0)
 );
 
-const getDefaultAbilityScores = (initialValue = 0): AbilityScoreMap =>
-  Object.values(AbilityScoreType).reduce<AbilityScoreMap>(
+/** Getters */
+
+const getDefaultAbilityScores = (initialValue = 0): AbilityScores =>
+  Object.values(AbilityScoreType).reduce<AbilityScores>(
     (map, name) => ({
       ...map,
       [name]: createAbilityScore({ name, value: initialValue }),
     }),
-    {} as AbilityScoreMap
+    {} as AbilityScores
   );
 
-export const withDefaultAbilityScores = (initialValue = 0) =>
+export const getAbilityScores = (a: WithAbilityScores): AbilityScores =>
+  a.abilityScores;
+
+export const getAbilityScore = (abilityScore: AbilityScoreType) => (
+  abilityScores: AbilityScores
+): AbilityScore => abilityScores[abilityScore];
+
+export const getAbilityScoreModifier = (
+  abilityScore: AbilityScoreType
+): ((withAbilityScores: WithAbilityScores) => number) =>
+  pipe(getAbilityScores, getAbilityScore(abilityScore), getValue, getModifier);
+
+/** Withs */
+
+export const withAbilityScores = (
+  abilityScores: AbilityScores
+): (<TEntry>(entry: TEntry) => TEntry & WithAbilityScores) =>
+  pipe(
+    merge<WithAbilityScores>({ abilityScores })
+  );
+
+export const withDefaultAbilityScores = (
+  initialValue = 0
+): (<TEntry>(entry: TEntry) => TEntry & WithAbilityScores) =>
   withAbilityScores(getDefaultAbilityScores(initialValue));

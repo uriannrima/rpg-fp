@@ -6,3 +6,6 @@ export interface WithValue<TValue> {
 
 export const withValue = <TValue>(value: TValue) =>
   merge<WithValue<TValue>>({ value });
+
+export const getValue = <TValue>(withValue: WithValue<TValue>): TValue =>
+  withValue.value;
