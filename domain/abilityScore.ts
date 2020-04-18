@@ -5,30 +5,24 @@ import { WithValue, withValue, getValue } from "./interfaces/WithValue";
 
 import { merge } from "./property";
 import { Creator } from "./creators";
-import { getModifier } from "./utils/computations";
+import { getModifier } from "./utils/number";
+import { KeyMap } from "./utils/enum";
+import { applyTo } from "./utils/pipe";
 
 /** Types & Interfaces */
 
 export interface AbilityScore extends WithName, WithValue<number> {}
 
 export enum AbilityScoreType {
-  strength = "strength",
-  dexterity = "dexterity",
-  constitution = "constitution",
-  intelligence = "intelligence",
-  wisdom = "wisdom",
-  charisma = "charisma",
+  Strength = "strength",
+  Dexterity = "dexterity",
+  Constitution = "constitution",
+  Intelligence = "intelligence",
+  Wisdom = "wisdom",
+  Charisma = "charisma",
 }
 
-export type AbilityScoreMap = {
-  [key in keyof typeof AbilityScoreType]: AbilityScore;
-};
-
-export type AbilityScoreDictionary = {
-  [key: string]: AbilityScore;
-};
-
-export type AbilityScores = AbilityScoreMap & AbilityScoreDictionary;
+export type AbilityScores = KeyMap<AbilityScoreType, AbilityScore>;
 
 export interface WithAbilityScores {
   abilityScores: AbilityScores;
@@ -77,3 +71,28 @@ export const withDefaultAbilityScores = (
   initialValue = 0
 ): (<TEntry>(entry: TEntry) => TEntry & WithAbilityScores) =>
   withAbilityScores(getDefaultAbilityScores(initialValue));
+
+export const setAbilityScoreValue = (value: number) => (
+  score: AbilityScore
+): AbilityScore => ({
+  ...score,
+  value,
+});
+
+export const setAbilityScore = (newAbilityScore: AbilityScore) => (
+  c: WithAbilityScores
+): WithAbilityScores => {
+  c.abilityScores[newAbilityScore.name] = newAbilityScore;
+  return c;
+};
+
+export const updateAbilityScore = (abilityScore: AbilityScoreType) => (
+  value: number
+) => (c: WithAbilityScores): WithAbilityScores =>
+  pipe(
+    getAbilityScores,
+    getAbilityScore(abilityScore),
+    setAbilityScoreValue(value),
+    setAbilityScore,
+    applyTo(c)
+  )(c);

@@ -5,4 +5,4 @@ export interface WithName {
 }
 
 export const withName = merge<WithName>({ name: "" });
-export const getName = (n: WithName): string => n.name;
+export const getName = ({ name }: WithName): string => name;

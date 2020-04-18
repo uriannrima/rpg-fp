@@ -40,7 +40,8 @@ export const setProficiencyToMap = (proficiency: string[]) => (toSet: {
   [key: string]: WithHasProficiency;
 }): void => proficiency.map((p) => toSet[p]).forEach(setProficient);
 
-export const getHasProficiency = (c: WithHasProficiency): boolean =>
-  c.hasProficiency;
+export const getHasProficiency = ({
+  hasProficiency,
+}: WithHasProficiency): boolean => hasProficiency;
 
 export const getProficient = R.filter(getHasProficiency);

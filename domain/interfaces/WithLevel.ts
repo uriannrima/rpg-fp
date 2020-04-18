@@ -5,3 +5,5 @@ export interface WithLevel {
 }
 
 export const withLevel = merge<WithLevel>({ level: 1 });
+
+export const getLevel = ({ level }: WithLevel): number => level;

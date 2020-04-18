@@ -67,34 +67,34 @@ export const createSkill: Creator<Skill> = R.pipe(
 /** Definitions */
 
 export const SkillsDefinitions: SkillDefinition[] = [
-  { name: SkillType.Athletics, keyAbilityScore: AbilityScoreType.strength },
+  { name: SkillType.Athletics, keyAbilityScore: AbilityScoreType.Strength },
 
-  { name: SkillType.Acrobatics, keyAbilityScore: AbilityScoreType.dexterity },
+  { name: SkillType.Acrobatics, keyAbilityScore: AbilityScoreType.Dexterity },
   {
     name: SkillType.SleightOfHand,
-    keyAbilityScore: AbilityScoreType.dexterity,
+    keyAbilityScore: AbilityScoreType.Dexterity,
   },
-  { name: SkillType.Stealth, keyAbilityScore: AbilityScoreType.dexterity },
+  { name: SkillType.Stealth, keyAbilityScore: AbilityScoreType.Dexterity },
 
-  { name: SkillType.Arcana, keyAbilityScore: AbilityScoreType.intelligence },
-  { name: SkillType.History, keyAbilityScore: AbilityScoreType.intelligence },
+  { name: SkillType.Arcana, keyAbilityScore: AbilityScoreType.Intelligence },
+  { name: SkillType.History, keyAbilityScore: AbilityScoreType.Intelligence },
   {
     name: SkillType.Investigation,
-    keyAbilityScore: AbilityScoreType.intelligence,
+    keyAbilityScore: AbilityScoreType.Intelligence,
   },
-  { name: SkillType.Nature, keyAbilityScore: AbilityScoreType.intelligence },
-  { name: SkillType.Religion, keyAbilityScore: AbilityScoreType.intelligence },
+  { name: SkillType.Nature, keyAbilityScore: AbilityScoreType.Intelligence },
+  { name: SkillType.Religion, keyAbilityScore: AbilityScoreType.Intelligence },
 
-  { name: SkillType.AnimalHandling, keyAbilityScore: AbilityScoreType.wisdom },
-  { name: SkillType.Insight, keyAbilityScore: AbilityScoreType.wisdom },
-  { name: SkillType.Medicine, keyAbilityScore: AbilityScoreType.wisdom },
-  { name: SkillType.Perception, keyAbilityScore: AbilityScoreType.wisdom },
-  { name: SkillType.Survival, keyAbilityScore: AbilityScoreType.wisdom },
+  { name: SkillType.AnimalHandling, keyAbilityScore: AbilityScoreType.Wisdom },
+  { name: SkillType.Insight, keyAbilityScore: AbilityScoreType.Wisdom },
+  { name: SkillType.Medicine, keyAbilityScore: AbilityScoreType.Wisdom },
+  { name: SkillType.Perception, keyAbilityScore: AbilityScoreType.Wisdom },
+  { name: SkillType.Survival, keyAbilityScore: AbilityScoreType.Wisdom },
 
-  { name: SkillType.Deception, keyAbilityScore: AbilityScoreType.charisma },
-  { name: SkillType.Intimidation, keyAbilityScore: AbilityScoreType.charisma },
-  { name: SkillType.Performance, keyAbilityScore: AbilityScoreType.charisma },
-  { name: SkillType.Persuasion, keyAbilityScore: AbilityScoreType.charisma },
+  { name: SkillType.Deception, keyAbilityScore: AbilityScoreType.Charisma },
+  { name: SkillType.Intimidation, keyAbilityScore: AbilityScoreType.Charisma },
+  { name: SkillType.Performance, keyAbilityScore: AbilityScoreType.Charisma },
+  { name: SkillType.Persuasion, keyAbilityScore: AbilityScoreType.Charisma },
 ];
 
 /** Getters */
@@ -135,4 +135,4 @@ export const getDefaultSkills = (initialValue = 0): Skill[] =>
 export const withDefaultSkills = (initialValue = 0): MergeFn<WithSkills> =>
   withSkills(getDefaultSkills(initialValue));
 
-export const getSkills = (c: WithSkills): Skill[] => c.skills;
+export const getSkills = ({ skills }: WithSkills): Skill[] => skills;

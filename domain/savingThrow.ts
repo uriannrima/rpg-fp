@@ -8,9 +8,9 @@ import {
 } from "./interfaces/WithHasProficiency";
 
 import { Creator } from "./creators";
-import { AbilityScoreType, AbilityScore } from "./abilityScore";
+import { AbilityScoreType } from "./abilityScore";
 import { merge, MergeFn } from "./property";
-import { Proficiency } from "./proficiency";
+import { KeyMap } from "./utils/enum";
 
 /** Types & Interfaces */
 
@@ -23,15 +23,7 @@ export interface WithSavingThrows {
   savingThrows: SavingThrows;
 }
 
-export type SavingThrowMap = {
-  [key in keyof typeof AbilityScoreType]: SavingThrow;
-};
-
-export type SavingThrowDictionary = {
-  [key: string]: SavingThrow;
-};
-
-export type SavingThrows = SavingThrowMap & SavingThrowDictionary;
+export type SavingThrows = KeyMap<AbilityScoreType, SavingThrow>;
 
 /** Creators */
 

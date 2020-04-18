@@ -1,35 +1,39 @@
 import { createCharacter } from "./domain/character";
-import {
-  getAbilityScoreModifier,
-  AbilityScoreType,
-} from "./domain/abilityScore";
-import { head } from "ramda";
+import { AbilityScoreType, updateAbilityScore } from "./domain/abilityScore";
 import {
   setProficiencyTo,
-  getProficient,
   setProficiencyToMap,
 } from "./domain/interfaces/WithHasProficiency";
 import { SkillType, getSkills } from "./domain/skill";
 import { getSavingThrows } from "./domain/savingThrow";
+import { getArmorClass } from "./domain/armorClass";
 
 const c = createCharacter({
   name: "Uriann",
 });
 
 setProficiencyTo([SkillType.Insight, SkillType.Religion])(getSkills(c));
-setProficiencyToMap([AbilityScoreType.wisdom, AbilityScoreType.charisma])(
+setProficiencyToMap([AbilityScoreType.Wisdom, AbilityScoreType.Charisma])(
   getSavingThrows(c)
 );
 
-const proficientSkills = getProficient(getSkills(c));
-const proficientSavingThrow = getProficient(getSavingThrows(c));
+// setAbilityScore(
+//   setAbilityScoreValue(14)(
+//     getAbilityScore(AbilityScoreType.Dexterity)(getAbilityScores(c))
+//   )
+// )(c);
+
+updateAbilityScore(AbilityScoreType.Dexterity)(14)(c);
 
 console.log(
-  { c },
-  getAbilityScoreModifier(AbilityScoreType.strength)(c),
-  c.savingThrows,
-  head(c.classes),
-  c.skills,
-  proficientSkills,
-  proficientSavingThrow
+  // { c },
+  // getAbilityScoreModifier(AbilityScoreType.Strength)(c),
+  // c.savingThrows,
+  // head(c.classes),
+  // c.skills,
+  // proficientSkills,
+  // proficientSavingThrow,
+  // c.abilityScores[AbilityScoreType.Charisma],
+  c.abilityScores.dexterity,
+  getArmorClass(c)
 );

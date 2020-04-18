@@ -72,7 +72,7 @@ export const ClassesDefinitions: ClassDefinition[] = [
       ...[WeaponProficiencyType.Simple, WeaponProficiencyType.Martial].map(
         createWeaponProficiency
       ),
-      ...[AbilityScoreType.strength, AbilityScoreType.constitution].map(
+      ...[AbilityScoreType.Strength, AbilityScoreType.Constitution].map(
         createSavingThrowProficiency
       ),
       ...[

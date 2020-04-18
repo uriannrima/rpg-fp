@@ -7,5 +7,9 @@ export interface WithKeyAbilityScore {
 }
 
 export const withKeyAbilityScore = merge<WithKeyAbilityScore>({
-  keyAbilityScore: AbilityScoreType.strength,
+  keyAbilityScore: AbilityScoreType.Strength,
 });
+
+export const getKeyAbilityScore = ({
+  keyAbilityScore,
+}: WithKeyAbilityScore): AbilityScoreType => keyAbilityScore;
