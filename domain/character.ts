@@ -7,7 +7,7 @@ import { Creator } from "./creators";
 import { withDefaultSavingThrows, WithSavingThrows } from "./savingThrow";
 import { withClasses, WithClasses } from "./class";
 import { WithSkills, withDefaultSkills } from "./skill";
-import { WithEquipments, withEquipments } from "./equipment/equipment";
+import { WithEquipments, withEquipments } from "./equipments/equipment";
 
 export interface Character
   extends WithName,

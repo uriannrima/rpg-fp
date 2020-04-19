@@ -8,19 +8,11 @@ import { Creator } from "./creators";
 import { getModifier } from "./utils/number";
 import { KeyMap } from "./utils/enum";
 import { applyTo } from "./utils/pipe";
+import { AbilityScoreType } from "./enums/AbilityScoreType";
 
 /** Types & Interfaces */
 
 export interface AbilityScore extends WithName, WithValue<number> {}
-
-export enum AbilityScoreType {
-  Strength = "strength",
-  Dexterity = "dexterity",
-  Constitution = "constitution",
-  Intelligence = "intelligence",
-  Wisdom = "wisdom",
-  Charisma = "charisma",
-}
 
 export type AbilityScores = KeyMap<AbilityScoreType, AbilityScore>;
 

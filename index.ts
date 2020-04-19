@@ -1,5 +1,5 @@
 import { createCharacter } from "./domain/character";
-import { AbilityScoreType, updateAbilityScore } from "./domain/abilityScore";
+import { updateAbilityScore } from "./domain/abilityScore";
 import {
   setProficiencyTo,
   setProficiencyToMap,
@@ -7,10 +7,13 @@ import {
 import { SkillType, getSkills } from "./domain/skill";
 import { getSavingThrows } from "./domain/savingThrow";
 import { getArmorClass } from "./domain/armorClass";
+
+import { AbilityScoreType } from "./domain/enums/AbilityScoreType";
 import {
   setEquipments,
   EXAMPLE_EQUIPMENTS,
-} from "./domain/equipment/equipment";
+} from "./domain/equipments/equipment";
+import { diceToString } from "./domain/dice";
 
 const c = createCharacter({
   name: "Uriann",
@@ -29,6 +32,8 @@ setProficiencyToMap([AbilityScoreType.Wisdom, AbilityScoreType.Charisma])(
 
 updateAbilityScore(AbilityScoreType.Dexterity)(16)(c);
 setEquipments(EXAMPLE_EQUIPMENTS)(c);
+
+console.log(diceToString([4, 4, 6, 6, 4]));
 
 console.log(
   // { c },

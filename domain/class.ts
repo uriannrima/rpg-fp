@@ -1,8 +1,6 @@
 import R, { pipe } from "ramda";
-import * as E from "fp-ts/lib/Either";
 
 import { WithName, withName, getName } from "./interfaces/WithName";
-import { AbilityScoreType } from "./abilityScore";
 import { SkillType } from "./skill";
 import {
   Proficiency,
@@ -17,23 +15,10 @@ import { merge, MergeFn } from "./property";
 import { Creator } from "./creators";
 import { WithLevel, withLevel } from "./interfaces/WithLevel";
 import { createGetDefinition } from "./utils/definitions";
+import { ClassType } from "./enums/ClassType";
+import { AbilityScoreType } from "./enums/AbilityScoreType";
 
 /** Types & Interfaces */
-
-export enum ClassType {
-  Barbarian = "Barbarian",
-  Bard = "Bard",
-  Cleric = "Cleric",
-  Druid = "Druid",
-  Fighter = "Fighter",
-  Monk = "Monk",
-  Paladin = "Paladin",
-  Ranger = "Ranger",
-  Rogue = "Rogue",
-  Sorcerer = "Sorcerer",
-  Warlock = "Warlock",
-  Wizard = "Wizard",
-}
 
 export interface WithProficiencies {
   proficiencies: Proficiency[];

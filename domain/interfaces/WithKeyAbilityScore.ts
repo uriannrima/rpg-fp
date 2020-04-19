@@ -1,6 +1,5 @@
 import { merge } from "../property";
-
-import { AbilityScoreType } from "../abilityScore";
+import { AbilityScoreType } from "../enums/AbilityScoreType";
 
 export interface WithKeyAbilityScore {
   keyAbilityScore: AbilityScoreType;

@@ -8,9 +8,9 @@ import {
 } from "./interfaces/WithHasProficiency";
 
 import { Creator } from "./creators";
-import { AbilityScoreType } from "./abilityScore";
 import { merge, MergeFn } from "./property";
 import { KeyMap } from "./utils/enum";
+import { AbilityScoreType } from "./enums/AbilityScoreType";
 
 /** Types & Interfaces */
 

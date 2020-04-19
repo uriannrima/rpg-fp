@@ -7,7 +7,6 @@ import {
 } from "./interfaces/WithHasProficiency";
 import { WithName, withName, getName } from "./interfaces/WithName";
 import { WithValue, withValue } from "./interfaces/WithValue";
-import { AbilityScoreType } from "./abilityScore";
 import { merge, MergeFn } from "./property";
 import { Creator } from "./creators";
 import {
@@ -19,6 +18,7 @@ import { createGetDefinition } from "./utils/definitions";
 import { onDefaultError } from "./utils/errorHandling";
 import { notUndefined } from "./utils/checking";
 import { filter } from "./utils/array";
+import { AbilityScoreType } from "./enums/AbilityScoreType";
 
 /** Types & Interfaces */
 

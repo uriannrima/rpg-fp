@@ -1,17 +1,21 @@
 import { equals, pipe, always, add } from "ramda";
-import { some, none, Option, fold } from "fp-ts/lib/Option";
+import { some, none, Option, fold, fromNullable } from "fp-ts/lib/Option";
 
-import { getType } from "../proficiency";
+import { getType, isType } from "../proficiency";
 import { MergeFn, merge } from "../property";
 import { CostUnit } from "../enums/CostUnit";
 import { MassUnit } from "../enums/MassUnit";
 import { DamageType } from "../enums/DamageType";
 import { EquipmentType } from "../enums/EquipmentType";
 import { Armor } from "./armor";
-import { Weapon } from "./weapon";
 import { Shield } from "./shield";
 import { getBaseArmorClass } from "../armorClass";
 import { getMaxModifier } from "../utils/number";
+import { ArmorType } from "../enums/ArmorType";
+import { createDice } from "../dice";
+import { Weapon } from "./weapon";
+import { WeaponType } from "../enums/WeaponType";
+import { RangeType } from "../enums/RangeType";
 
 export interface EquipmentProperty {
   name: string;
@@ -46,21 +50,23 @@ export const findEquipment = <T extends Equipment>(
 ) => (es: Equipment[]): Option<T> => {
   const equipment = es.find((e): e is T => fn(e));
 
-  return equipment ? some(equipment) : none;
+  return fromNullable(equipment);
 };
 
-export const getArmor = (es: Equipment[]): Option<Armor> => {
-  const armor = es.find((e): e is Armor => {
-    const type = getType(e);
-    return equals(EquipmentType.Armor)(type);
-  });
-
-  return armor ? some(armor) : none;
-};
+export const getArmor = findEquipment<Armor>(
+  pipe(getType, equals(EquipmentType.Armor))
+);
 
 export const getShield = findEquipment<Shield>(
   pipe(getType, equals(EquipmentType.Shield))
 );
+
+export const isEquipmentType = <TEquipment extends Equipment>(
+  type: EquipmentType
+) => (e: Equipment): e is TEquipment => isType(type)(e);
+
+export const getWeapons = (es: Equipment[]): Weapon[] =>
+  es.filter(isEquipmentType(EquipmentType.Weapon));
 
 export const getArmorFromEquipments = pipe(getEquipments, getArmor);
 export const getShieldFromEquipments = pipe(getEquipments, getShield);
@@ -84,6 +90,7 @@ export const getBonusArmorFromShield = fold(
 export const EXAMPLE_EQUIPMENTS: Equipment[] = [
   {
     name: "Padded armor",
+    armorType: ArmorType.Light,
     cost: { unit: CostUnit.Gold, value: 5 },
     baseArmor: 11,
     hasDisadvantage: true,
@@ -98,7 +105,7 @@ export const EXAMPLE_EQUIPMENTS: Equipment[] = [
     cost: { unit: CostUnit.Silver, value: 1 },
     damage: {
       type: DamageType.Bludgeoning,
-      dice: { faces: 4, multiplier: 1 },
+      dice: [4],
     },
     weight: {
       unit: MassUnit.Pounds,
@@ -106,6 +113,8 @@ export const EXAMPLE_EQUIPMENTS: Equipment[] = [
     },
     properties: [{ name: "Light" }],
     type: EquipmentType.Weapon,
+    weaponType: WeaponType.Simple,
+    range: RangeType.Melee,
   },
   {
     name: "Small shield",

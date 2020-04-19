@@ -1,10 +1,6 @@
 import { add, pipe } from "ramda";
 
-import {
-  AbilityScoreType,
-  WithAbilityScores,
-  getAbilityScoreModifier,
-} from "./abilityScore";
+import { WithAbilityScores, getAbilityScoreModifier } from "./abilityScore";
 
 import {
   WithEquipments,
@@ -12,7 +8,8 @@ import {
   getShieldFromEquipments,
   getArmorClassFromArmor,
   getBonusArmorFromShield,
-} from "./equipment/equipment";
+} from "./equipments/equipment";
+import { AbilityScoreType } from "./enums/AbilityScoreType";
 
 const BASE_ARMOR_CLASS = 10;
 
