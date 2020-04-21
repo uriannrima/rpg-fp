@@ -6,7 +6,7 @@ import {
   withHasProficiency,
 } from "./interfaces/WithHasProficiency";
 import { WithName, withName, getName } from "./interfaces/WithName";
-import { WithValue, withValue } from "./interfaces/WithValue";
+import { WithValue, withValue, getValue } from "./interfaces/WithValue";
 import { merge, MergeFn } from "./property";
 import { Creator } from "./creators";
 import {
@@ -19,6 +19,12 @@ import { onDefaultError } from "./utils/errorHandling";
 import { notUndefined } from "./utils/checking";
 import { filter } from "./utils/array";
 import { AbilityScoreType } from "./enums/AbilityScoreType";
+import {
+  WithAbilityScores,
+  getAbilityScores,
+  getAbilityScore,
+} from "./abilityScore";
+import { getModifier } from "./utils/number";
 
 /** Types & Interfaces */
 
@@ -136,3 +142,16 @@ export const withDefaultSkills = (initialValue = 0): MergeFn<WithSkills> =>
   withSkills(getDefaultSkills(initialValue));
 
 export const getSkills = ({ skills }: WithSkills): Skill[] => skills;
+
+export const getSkillDC = (skillType: string | SkillType) => (
+  c: WithAbilityScores
+): E.Either<Error, number> =>
+  E.map((sk: SkillDefinition) =>
+    R.pipe(
+      getAbilityScores,
+      getAbilityScore(sk.keyAbilityScore),
+      getValue,
+      getModifier,
+      R.add(10)
+    )(c)
+  )(getSkillDefinition(skillType));
