@@ -20,7 +20,7 @@ export interface WeaponModifier {
 export interface Weapon extends WithType<EquipmentType.Weapon> {
   name: string;
   cost: Cost;
-  damage: Damage;
+  damages: Damage[];
   weight: Weight;
   properties?: EquipmentProperty[];
   weaponType: WeaponType;

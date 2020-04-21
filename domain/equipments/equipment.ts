@@ -103,15 +103,23 @@ export const EXAMPLE_EQUIPMENTS: Equipment[] = [
   {
     name: "Club",
     cost: { unit: CostUnit.Silver, value: 1 },
-    damage: {
-      type: DamageType.Bludgeoning,
-      dice: [4],
-    },
+    damages: [
+      {
+        type: DamageType.Bludgeoning,
+        dice: [{ multiplier: 1, faces: 4 }],
+      },
+    ],
     weight: {
       unit: MassUnit.Pounds,
       value: 2,
     },
-    properties: [{ name: "Light" }],
+    properties: [
+      {
+        name: "light",
+        description:
+          "A light weapon is small and easy to handle, making it ideal for use when fighting with two weapons.",
+      },
+    ],
     type: EquipmentType.Weapon,
     weaponType: WeaponType.Simple,
     range: RangeType.Melee,

@@ -13,7 +13,6 @@ import {
   setEquipments,
   EXAMPLE_EQUIPMENTS,
 } from "./domain/equipments/equipment";
-import { diceToString } from "./domain/dice";
 
 const c = createCharacter({
   name: "Uriann",
