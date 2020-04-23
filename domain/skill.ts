@@ -5,16 +5,16 @@ import {
   WithHasProficiency,
   withHasProficiency,
 } from "./interfaces/WithHasProficiency";
-import { WithName, withName, getName } from "./interfaces/WithName";
+import { WithName, withName } from "./interfaces/WithName";
 import { WithValue, withValue, getValue } from "./interfaces/WithValue";
 import { merge, MergeFn } from "./property";
 import { Creator } from "./creators";
 import {
   WithKeyAbilityScore,
   withKeyAbilityScore,
+  getKeyAbilityScore,
 } from "./interfaces/WithKeyAbilityScore";
 
-import { createGetDefinition } from "./utils/definitions";
 import { onDefaultError } from "./utils/errorHandling";
 import { notUndefined } from "./utils/checking";
 import { filter } from "./utils/array";
@@ -30,9 +30,9 @@ import { getModifier } from "./utils/number";
 
 export interface Skill
   extends WithHasProficiency,
-    WithName,
-    WithValue<number>,
-    WithKeyAbilityScore {}
+  WithName,
+  WithValue<number>,
+  WithKeyAbilityScore { }
 
 export enum SkillType {
   Athletics = "Athletics",
@@ -59,7 +59,7 @@ export enum SkillType {
   Persuasion = "Persuasion",
 }
 
-export interface SkillDefinition extends WithName, WithKeyAbilityScore {}
+export interface SkillDefinition extends WithName, WithKeyAbilityScore { }
 
 /** Creators */
 
@@ -105,11 +105,13 @@ export const SkillsDefinitions: SkillDefinition[] = [
 
 /** Getters */
 
-const getSkillDefinition = createGetDefinition(
-  SkillsDefinitions
-)((definitionToFind: string | SkillType) =>
-  R.pipe(getName, R.equals(definitionToFind))
-);
+// const getSkillDefinition = createGetDefinition(
+//   SkillsDefinitions
+// )((definitionToFind: string | SkillType) =>
+//   R.pipe(getName, R.equals(definitionToFind))
+// );
+
+declare function getSkillDefinition(toFind: string | SkillType): E.Either<Error, SkillDefinition>;
 
 /** Withs */
 
@@ -146,12 +148,17 @@ export const getSkills = ({ skills }: WithSkills): Skill[] => skills;
 export const getSkillDC = (skillType: string | SkillType) => (
   c: WithAbilityScores
 ): E.Either<Error, number> =>
-  E.map((sk: SkillDefinition) =>
-    R.pipe(
-      getAbilityScores,
-      getAbilityScore(sk.keyAbilityScore),
-      getValue,
-      getModifier,
-      R.add(10)
-    )(c)
-  )(getSkillDefinition(skillType));
+  R.pipe(
+    getSkillDefinition,
+    E.map(
+      R.pipe(
+        getKeyAbilityScore,
+        getAbilityScore,
+        geKeyScore => R.pipe(getAbilityScores, geKeyScore),
+        R.applyTo(c),
+        getValue,
+        getModifier,
+        R.add(10),
+      )
+    ),
+  )(skillType)

@@ -32,8 +32,6 @@ setProficiencyToMap([AbilityScoreType.Wisdom, AbilityScoreType.Charisma])(
 updateAbilityScore(AbilityScoreType.Dexterity)(16)(c);
 setEquipments(EXAMPLE_EQUIPMENTS)(c);
 
-console.log(diceToString([4, 4, 6, 6, 4]));
-
 console.log(
   // { c },
   // getAbilityScoreModifier(AbilityScoreType.Strength)(c),
