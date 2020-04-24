@@ -1,7 +1,9 @@
 import { merge } from "../property";
 
+export type Name = string;
+
 export interface WithName {
-  name: string;
+  name: Name;
 }
 
 export const withName = merge<WithName>({ name: "" });

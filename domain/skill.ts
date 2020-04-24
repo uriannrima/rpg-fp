@@ -5,7 +5,7 @@ import {
   WithHasProficiency,
   withHasProficiency,
 } from "./interfaces/WithHasProficiency";
-import { WithName, withName } from "./interfaces/WithName";
+import { WithName, withName, Name } from "./interfaces/WithName";
 import { WithValue, withValue, getValue } from "./interfaces/WithValue";
 import { merge, MergeFn } from "./property";
 import { Creator } from "./creators";
@@ -59,6 +59,8 @@ export enum SkillType {
   Persuasion = "Persuasion",
 }
 
+export type SkillName = Name | SkillType;
+
 export interface SkillDefinition extends WithName, WithKeyAbilityScore { }
 
 /** Creators */
@@ -111,7 +113,7 @@ export const SkillsDefinitions: SkillDefinition[] = [
 //   R.pipe(getName, R.equals(definitionToFind))
 // );
 
-declare function getSkillDefinition(toFind: string | SkillType): E.Either<Error, SkillDefinition>;
+declare function getSkillDefinition(skillName: SkillName): E.Either<Error, SkillDefinition>;
 
 /** Withs */
 
@@ -145,7 +147,7 @@ export const withDefaultSkills = (initialValue = 0): MergeFn<WithSkills> =>
 
 export const getSkills = ({ skills }: WithSkills): Skill[] => skills;
 
-export const getSkillDC = (skillType: string | SkillType) => (
+export const getSkillDC = (skillName: SkillName) => (
   c: WithAbilityScores
 ): E.Either<Error, number> =>
   R.pipe(
@@ -161,4 +163,4 @@ export const getSkillDC = (skillType: string | SkillType) => (
         R.add(10),
       )
     ),
-  )(skillType)
+  )(skillName)
