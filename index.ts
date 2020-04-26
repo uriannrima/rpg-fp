@@ -4,7 +4,7 @@ import {
   setProficiencyTo,
   setProficiencyToMap,
 } from "./domain/interfaces/WithHasProficiency";
-import { SkillType, getSkills } from "./domain/skill";
+import { SkillType, getSkills } from "./domain/rpg/skill/skill";
 import { getSavingThrows } from "./domain/savingThrow";
 import { getArmorClass } from "./domain/armorClass";
 

@@ -1,7 +1,7 @@
 import R, { pipe } from "ramda";
 
 import { WithName, withName, getName } from "./interfaces/WithName";
-import { SkillType } from "./skill";
+import { SkillType } from "./rpg/skill/skill";
 import {
   Proficiency,
   createArmorProficiency,
