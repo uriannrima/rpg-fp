@@ -11,6 +11,6 @@ import { Skill } from "./interfaces";
 export const createSkill: Creator<Skill> = Ramda.pipe(
   withName,
   withValue(0),
-  withHasProficiency,
+  withHasProficiency(false),
   withKeyAbilityScore
 );

@@ -11,7 +11,7 @@ import { getDefaultSkills } from "./morphisms";
 export const withSkills = (skills: Skill[]): MergeFn<WithSkills> =>
   merge<WithSkills>({ skills });
 
-export const withDefaultSkills = (
-  initialValue = 0
-): Reader.Reader<Configuration, MergeFn<WithSkills>> =>
-  flow(getDefaultSkills(initialValue), withSkills);
+export const withDefaultSkills = (): Reader.Reader<
+  Configuration,
+  MergeFn<WithSkills>
+> => flow(getDefaultSkills(), withSkills);

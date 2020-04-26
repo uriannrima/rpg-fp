@@ -16,14 +16,20 @@ import { SkillName } from "./types";
 import { WithSkills, Skill, SkillDefinition } from "./interfaces";
 import { SkillNotFound } from "./errors";
 import { pipe } from "fp-ts/lib/pipeable";
-import { flow } from "fp-ts/lib/function";
 import { getKeyAbilityScore } from "../../interfaces/WithKeyAbilityScore";
 import { getValue } from "../../interfaces/WithValue";
 import { getModifier } from "../../utils/number";
+import {
+  WithProficiencyBonus,
+  getProficiencyBonus,
+} from "../../interfaces/WithProficiencyBonus";
+import { getHasProficiency } from "../../interfaces/WithHasProficiency";
+
+type SkillCharacter = WithAbilityScores & WithSkills & WithProficiencyBonus;
 
 export const getSkills = ({ skills }: WithSkills): Skill[] => skills;
 
-export const getSkillDefinition = (
+export const findSkillDefinition = (
   skillName: SkillName
 ): ReaderEither.ReaderEither<Configuration, Error, SkillDefinition> => (
   configuration: Configuration
@@ -42,20 +48,34 @@ export const findSkill = (skillName: SkillName) => ({
     skills.find(Ramda.compose(Ramda.equals(skillName), getName))
   );
 
-export const getSkillDC = (skillName: SkillName) => (
-  c: WithAbilityScores
-): ReaderEither.ReaderEither<Configuration, Error, number> =>
+export const getSkillModifier = (skillName: SkillName) => (
+  character: SkillCharacter
+): Either.Either<Error, number> =>
   pipe(
-    getSkillDefinition(skillName),
-    ReaderEither.map(
-      flow(
-        getKeyAbilityScore,
+    findSkill(skillName),
+    Ramda.applyTo(character),
+    Either.map((skill) =>
+      pipe(
+        getKeyAbilityScore(skill),
         (abilityScoreName) =>
           Ramda.pipe(getAbilityScores, getAbilityScore(abilityScoreName)),
-        Ramda.applyTo(c),
+        Ramda.applyTo(character),
         getValue,
         getModifier,
-        Ramda.add(10)
+        Ramda.ifElse(
+          Ramda.always(getHasProficiency(skill)),
+          Ramda.add(getProficiencyBonus(character)),
+          Ramda.identity
+        )
       )
     )
+  );
+
+export const getSkillDC = (skillName: SkillName) => (
+  character: SkillCharacter
+): Either.Either<Error, number> =>
+  pipe(
+    getSkillModifier(skillName),
+    Ramda.applyTo(character),
+    Either.map(Ramda.add(10))
   );

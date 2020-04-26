@@ -1,17 +1,18 @@
 import * as R from "ramda";
-import { pipe } from "fp-ts/lib/pipeable";
 
-import { merge } from "../property";
+import { merge, MergeFn } from "../property";
 import { WithName, getName } from "./WithName";
-import { filter } from "../utils/array";
 
 export interface WithHasProficiency {
   hasProficiency: boolean;
 }
 
-export const withHasProficiency = merge<WithHasProficiency>({
-  hasProficiency: false,
-});
+export const withHasProficiency = (
+  hasProficiency = false
+): MergeFn<WithHasProficiency> =>
+  merge<WithHasProficiency>({
+    hasProficiency,
+  });
 
 export const setHasProficiency = (hasProficiency: boolean) => <
   TEntry extends WithHasProficiency
