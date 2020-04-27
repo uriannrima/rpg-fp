@@ -1,5 +1,6 @@
 /** https://mostly-adequate.gitbooks.io/mostly-adequate-guide/ch09.html# */
 
+import * as E from "fp-ts/lib/Either";
 import * as IO from "fp-ts/lib/IO";
 import { flow } from "fp-ts/lib/function";
 import * as Ramda from "ramda";
@@ -33,3 +34,25 @@ const logFilename = flow(
 // But executing it is a side effect, that we don't want. So we just want to pass to the next function
 // getBasenameIO expects a IO String, so it works perfectly. 
 // pureLogChain also expectes a IO String, so it also works.
+
+type Email = {};
+
+declare function validateEmail(email: Email): E.Either<string, Email>;
+declare function addToMailingList(email: Email): IO.IO<Email[]>;
+declare function emailBlast(email: Email[]): IO.IO<void>;
+
+// joinMailingList :: Email -> Either String (IO ())
+const joinMailingList: (email: Email) => E.Either<string, IO.IO<void>> = flow(
+    // Email -> Either<String, Email>
+    validateEmail,
+    // Either<string, Email> -> Either<string, IO<Email[]>>
+    E.map(addToMailingList),
+    // Either<string, IO<Email[]>> -> Either<string, IO<void>>
+    E.map(
+        // IO<Email[]> -> IO<void>
+        IO.chain(
+            // Email[] -> IO<void>
+            emailBlast
+        )
+    )
+);
