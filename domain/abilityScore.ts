@@ -38,8 +38,9 @@ const getDefaultAbilityScores = (initialValue = 0): AbilityScores =>
     {} as AbilityScores
   );
 
-export const getAbilityScores = (a: WithAbilityScores): AbilityScores =>
-  a.abilityScores;
+export const getAbilityScores = ({
+  abilityScores,
+}: WithAbilityScores): AbilityScores => abilityScores;
 
 export const getAbilityScore = (abilityScore: AbilityScoreType) => (
   abilityScores: AbilityScores

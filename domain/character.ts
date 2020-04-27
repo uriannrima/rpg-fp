@@ -6,8 +6,13 @@ import { withDefaultAbilityScores, WithAbilityScores } from "./abilityScore";
 import { Creator } from "./creators";
 import { withDefaultSavingThrows, WithSavingThrows } from "./savingThrow";
 import { withClasses, WithClasses } from "./class";
-import { WithSkills, withDefaultSkills } from "./skill";
 import { WithEquipments, withEquipments } from "./equipments/equipment";
+import { WithSkills } from "./rpg/skill/interfaces";
+import { withSkills } from "./rpg/skill/withs";
+import {
+  WithProficiencyBonus,
+  withProficiencyBonus,
+} from "./interfaces/WithProficiencyBonus";
 
 export interface Character
   extends WithName,
@@ -15,13 +20,15 @@ export interface Character
     WithSavingThrows,
     WithClasses,
     WithSkills,
-    WithEquipments {}
+    WithEquipments,
+    WithProficiencyBonus {}
 
 export const createCharacter: Creator<Character> = R.pipe(
   withName,
   withDefaultAbilityScores(10),
   withDefaultSavingThrows(0),
   withClasses([]),
-  withDefaultSkills(0),
-  withEquipments([])
+  withSkills([]),
+  withEquipments([]),
+  withProficiencyBonus(0)
 );

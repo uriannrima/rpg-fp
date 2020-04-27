@@ -1,6 +1,11 @@
 import { Either, fromNullable } from "fp-ts/lib/Either";
 
-type Map<A, B, C> = (a: A) => (b: B) => C;
+export class DefinitionNotFound extends Error {
+  constructor(definitionName: any) {
+    super();
+    this.message = `Definition not found for "${definitionName}".`;
+  }
+}
 
 export const createGetDefinition = <TDefinition>(
   definitions: TDefinition[]
@@ -9,7 +14,5 @@ export const createGetDefinition = <TDefinition>(
 ) => (definitionToFind: A): Either<Error, TDefinition> => {
   const definition = definitions.find(findFn(definitionToFind));
 
-  return fromNullable(
-    new Error(`Definition not found for "${definitionToFind}".`)
-  )(definition);
+  return fromNullable(new DefinitionNotFound(definitionToFind))(definition);
 };
