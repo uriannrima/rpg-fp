@@ -5,7 +5,7 @@ import { withDefaultAbilityScores } from "../../abilityScore";
 import { AbilityScoreType } from "../../enums/AbilityScoreType";
 
 import { SkillType } from "./types";
-import { getSkillDC, getSkillModifier } from "./getters";
+import { getSkillDC, getSkillModifier, findSkill, getSkills } from "./getters";
 import { withSkills } from "./withs";
 import { withProficiencyBonus } from "../../interfaces/WithProficiencyBonus";
 import { SkillNotFound } from "./errors";
@@ -29,7 +29,26 @@ describe("skill", () => {
       ...withProficiencyBonus(2)({}),
     };
 
-    describe("findSkill", () => {});
+    describe("getSkills", () => {
+      it("should the list of skills of a character", () => {
+        assert.deepStrictEqual(getSkills(character), character.skills);
+      });
+    });
+
+    describe("findSkill", () => {
+      it("should get a skill defined in character", () => {
+        const skill = findSkill(SkillType.Perception)(character);
+        assert.deepStrictEqual(skill, Either.right(character.skills[0]));
+      });
+
+      it("should give skill not found when looking for a skill not defined in character", () => {
+        const skill = findSkill(SkillType.Intimidation)(character);
+        assert.deepStrictEqual(
+          skill,
+          Either.left(new SkillNotFound(SkillType.Intimidation))
+        );
+      });
+    });
 
     describe("getSkillModifier", () => {
       it("should get modifier 3 for Perception skill", () => {
@@ -56,14 +75,6 @@ describe("skill", () => {
         const skillDC = getSkillDC(SkillType.Insight)(character);
 
         assert.deepStrictEqual(skillDC, Either.right(15));
-      });
-
-      it("should give skill not found when getting DC for a skill not defined in character", () => {
-        const skillDC = getSkillDC(SkillType.Intimidation)(character);
-        assert.deepStrictEqual(
-          skillDC,
-          Either.left(new SkillNotFound(SkillType.Intimidation))
-        );
       });
     });
   });
