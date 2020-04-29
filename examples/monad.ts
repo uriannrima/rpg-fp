@@ -35,6 +35,8 @@ const logFilename = flow(
 // getBasenameIO expects a IO String, so it works perfectly. 
 // pureLogChain also expectes a IO String, so it also works.
 
+/** Third exercise */
+
 type Email = {};
 
 declare function validateEmail(email: Email): E.Either<string, Email>;
