@@ -18,7 +18,7 @@ export const setHasProficiency = (hasProficiency: boolean) => <
   TEntry extends WithHasProficiency
 >(
   entry: TEntry
-): TEntry => Object.assign(entry, { hasProficiency });
+): TEntry => Object.assign({}, entry, { hasProficiency });
 
 export const setProficient = setHasProficiency(true);
 

@@ -8,7 +8,7 @@ import {
   getShieldFromEquipments,
   getArmorClassFromArmor,
   getBonusArmorFromShield,
-} from "./equipments/equipment";
+} from "./rpg/equipments/equipment";
 import { AbilityScoreType } from "./enums/AbilityScoreType";
 
 const BASE_ARMOR_CLASS = 10;

@@ -67,17 +67,12 @@ export const withDefaultAbilityScores = (
 
 export const setAbilityScoreValue = (value: number) => (
   score: AbilityScore
-): AbilityScore => ({
-  ...score,
-  value,
-});
+): AbilityScore => Object.assign({}, score, { value });
 
 export const setAbilityScore = (newAbilityScore: AbilityScore) => (
   c: WithAbilityScores
-): WithAbilityScores => {
-  c.abilityScores[newAbilityScore.name] = newAbilityScore;
-  return c;
-};
+): WithAbilityScores =>
+  Object.assign({}, c, { [newAbilityScore.name]: newAbilityScore });
 
 export const updateAbilityScore = (abilityScore: AbilityScoreType) => (
   value: number

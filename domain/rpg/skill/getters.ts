@@ -1,49 +1,50 @@
-import * as ReaderEither from "fp-ts/lib/ReaderEither";
-import * as Either from "fp-ts/lib/Either";
 import * as Ramda from "ramda";
 
+import * as ReaderEither from "fp-ts/lib/ReaderEither";
+import * as Either from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/pipeable";
+
+import * as AbilityScore from "../../abilityScore";
+import * as WithProficiencyBonus from "../../interfaces/WithProficiencyBonus";
 import { getName } from "../../interfaces/WithName";
 import { DefinitionNotFound } from "../../utils/definitions";
-import {
-  WithAbilityScores,
-  getAbilityScores,
-  getAbilityScore,
-} from "../../abilityScore";
-
 import { Configuration } from "../Configuration";
-
-import { SkillName } from "./types";
-import { WithSkills, Skill, SkillDefinition } from "./interfaces";
-import { SkillNotFound } from "./errors";
-import { pipe } from "fp-ts/lib/pipeable";
 import { getKeyAbilityScore } from "../../interfaces/WithKeyAbilityScore";
 import { getValue } from "../../interfaces/WithValue";
 import { getModifier } from "../../utils/number";
-import {
-  WithProficiencyBonus,
-  getProficiencyBonus,
-} from "../../interfaces/WithProficiencyBonus";
 import { getHasProficiency } from "../../interfaces/WithHasProficiency";
 
-type SkillCharacter = WithAbilityScores & WithSkills & WithProficiencyBonus;
+import * as Interfaces from "./interfaces";
+import { SkillName } from "./types";
+import { SkillNotFound } from "./errors";
 
-export const getSkills = ({ skills }: WithSkills): Skill[] => skills;
+type SkillCharacter = AbilityScore.WithAbilityScores &
+  Interfaces.WithSkills &
+  WithProficiencyBonus.WithProficiencyBonus;
+
+export const getSkills = ({
+  skills,
+}: Interfaces.WithSkills): Interfaces.Skill[] => skills;
 
 export const findSkillDefinition = (
   skillName: SkillName
-): ReaderEither.ReaderEither<Configuration, Error, SkillDefinition> => (
+): ReaderEither.ReaderEither<
+  Configuration,
+  Error,
+  Interfaces.SkillDefinition
+> => (
   configuration: Configuration
-): Either.Either<Error, SkillDefinition> => {
+): Either.Either<Error, Interfaces.SkillDefinition> => {
   return Either.fromNullable(new DefinitionNotFound(skillName))(
-    Ramda.find<SkillDefinition>(Ramda.pipe(getName, Ramda.equals(skillName)))(
-      configuration.definitions.skills
-    )
+    Ramda.find<Interfaces.SkillDefinition>(
+      Ramda.pipe(getName, Ramda.equals(skillName))
+    )(configuration.definitions.skills)
   );
 };
 
 export const findSkill = (skillName: SkillName) => ({
   skills,
-}: WithSkills): Either.Either<Error, Skill> =>
+}: Interfaces.WithSkills): Either.Either<Error, Interfaces.Skill> =>
   Either.fromNullable(new SkillNotFound(skillName))(
     skills.find(Ramda.compose(Ramda.equals(skillName), getName))
   );
@@ -58,13 +59,16 @@ export const getSkillModifier = (skillName: SkillName) => (
       pipe(
         getKeyAbilityScore(skill),
         (abilityScoreName) =>
-          Ramda.pipe(getAbilityScores, getAbilityScore(abilityScoreName)),
+          Ramda.pipe(
+            AbilityScore.getAbilityScores,
+            AbilityScore.getAbilityScore(abilityScoreName)
+          ),
         Ramda.applyTo(character),
         getValue,
         getModifier,
         Ramda.ifElse(
           Ramda.always(getHasProficiency(skill)),
-          Ramda.add(getProficiencyBonus(character)),
+          Ramda.add(WithProficiencyBonus.getProficiencyBonus(character)),
           Ramda.identity
         )
       )

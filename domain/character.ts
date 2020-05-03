@@ -6,7 +6,7 @@ import { withDefaultAbilityScores, WithAbilityScores } from "./abilityScore";
 import { Creator } from "./creators";
 import { withDefaultSavingThrows, WithSavingThrows } from "./savingThrow";
 import { withClasses, WithClasses } from "./class";
-import { WithEquipments, withEquipments } from "./equipments/equipment";
+import { WithEquipments, withEquipments } from "./rpg/equipments/equipment";
 import { WithSkills } from "./rpg/skill/interfaces";
 import { withSkills } from "./rpg/skill/withs";
 import {

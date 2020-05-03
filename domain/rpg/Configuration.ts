@@ -5,3 +5,7 @@ export interface Configuration {
     skills: SkillDefinitions;
   };
 }
+
+export const getDefinitions = ({ definitions }: Configuration) => definitions;
+
+export const getSkills = ({ skills }: { skills: SkillDefinitions }) => skills;

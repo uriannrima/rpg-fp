@@ -12,7 +12,7 @@ import { AbilityScoreType } from "./domain/enums/AbilityScoreType";
 import {
   setEquipments,
   EXAMPLE_EQUIPMENTS,
-} from "./domain/equipments/equipment";
+} from "./domain/rpg/equipments/equipment";
 
 const c = createCharacter({
   name: "Uriann",
