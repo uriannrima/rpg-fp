@@ -13,6 +13,9 @@
  *
  */
 
+import { getMonoid } from "fp-ts/lib/Array";
+import { Monoid } from "fp-ts/lib/Monoid";
+
 interface Sum {
   x: number;
   concat({ x: y }: Sum): Sum;
@@ -147,3 +150,62 @@ const Pair = (x, y) => ({
 });
 
 console.log(String(Pair([], []).concat(Pair([1, 3], [2, 4]))));
+
+/**
+ * Monoids using FP-TS
+ */
+
+// Sum Monoid
+const monoidSum: Monoid<number> = {
+  concat: (x, y) => x + y,
+  empty: 0,
+};
+
+import * as M from "fp-ts/lib/Monoid";
+import * as SG from "fp-ts/lib/Semigroup";
+
+const a1 = [1, 2, 3];
+console.log(M.fold(monoidSum)(a1));
+
+// Struct Monoid
+
+interface Account {
+  name: string;
+  isPaid: boolean;
+  points: number;
+  friends: string[];
+}
+
+const semigroupAccount: SG.Semigroup<Account> = SG.getStructSemigroup({
+  name: SG.getFirstSemigroup<string>(),
+  points: SG.semigroupSum,
+  friends: { concat: (x, y) => x.concat(y) } as SG.Semigroup<string[]>,
+  isPaid: SG.semigroupAll,
+});
+
+const accountMonoid: M.Monoid<Account> = {
+  concat: semigroupAccount.concat,
+  empty: {
+    name: "",
+    isPaid: false,
+    points: 0,
+    friends: [],
+  },
+};
+
+const mergedAccount = M.fold(accountMonoid)([
+  // {
+  //   name: "Nico",
+  //   isPaid: true,
+  //   points: 10,
+  //   friends: ["Franklin"],
+  // },
+  // {
+  //   name: "Nico",
+  //   isPaid: false,
+  //   points: 2,
+  //   friends: ["Gatsby"],
+  // },
+]);
+
+console.log(mergedAccount);
