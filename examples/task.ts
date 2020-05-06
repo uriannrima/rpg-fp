@@ -1,5 +1,7 @@
 import { array } from 'fp-ts/lib/Array';
-import { task, taskSeq } from 'fp-ts/lib/Task';
+import { Task, task, taskSeq } from 'fp-ts/lib/Task';
+
+const getUser = (name: string): Task<{ name: string }> => (): Promise<{ name: string }> => Promise.resolve({ name });
 
 const names = [
     'Gcanti',

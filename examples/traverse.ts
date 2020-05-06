@@ -56,3 +56,78 @@ const namesValidated = validate<Error, string>(isLengthGt(3))(nameError)(names);
 either.map(namesValidated, console.log);
 // Error: Name should be bigger than 3 characters long.
 either.mapLeft(namesValidated, console.log);
+
+
+
+/** 
+ * https://stackoverflow.com/questions/60645655/map-io-to-array-of-either-in-fp-ts 
+ */
+
+/** Used as to always return an element to avoid using maybe/option */
+const get = (elementId: string) =>
+  document.getElementById(elementId) || ({} as HTMLElement);
+
+const find = (selector: string) => (selection: Element) =>
+  selection.querySelectorAll(selector);
+
+const attr = (name: string, value?: string) => (
+  selection: Element
+): string | null | undefined => {
+  if (value) {
+    selection.setAttribute(name, value);
+    return;
+  }
+
+  return selection.getAttribute(name);
+};
+
+import { IO, io, chain } from "fp-ts/lib/IO";
+import { pipe } from "fp-ts/lib/pipeable";
+
+const getIO = (elementId: string) => io.of(get(elementId));
+
+const findIO = (selector: string) => (selection: Element) =>
+  io.of(find(selector)(selection));
+
+const attrIO = (name, value?) => (selection: Element) =>
+  io.of(attr(name, value)(selection));
+
+const rows: Array<HTMLTableRowElement> = [];
+/**
+ * We have an Array IO, which isnt the most pratical to work on.
+ * Would be better to have an IO Array
+ */
+const arrayOfIo: Array<IO<string | null | undefined>> = rows.map(
+  attrIO("data-test")
+);
+
+/**
+ * We can traverse an array when we want to "invert" the result
+ * Array<IO> ~> IO<Array>
+ * To do so, we must traverse using an Applicative:
+ * - Functor (map)
+ * - Pointed (of)
+ * - Apply (ap)
+ * array.traverse(Applicative)(target, functionToApply)
+ */
+const ioOfArray = array.traverse(io)(rows, attrIO("data-test"));
+
+const getTests = pipe(
+  /** Get Table */
+  get("table"),
+  /** Get All TRs */
+  findIO("tr"),
+  /**
+   * Find links inside rows
+   * Traverse instead of map, otherwise we'll have Array<IO>, we want IO<Array>
+   * We also chain, instead of map, otherwise we'll have IO<IO<Array>>
+   */
+  chain((rows) => array.traverse(io)(Array.from(rows), findIO("a"))),
+  /**
+   * Get data test attr from links
+   * We flatten links, since we have [TR[Links,Links,Links], TR[Links]]
+   */
+  chain((links) =>
+    array.traverse(io)(Array.from(links).flat(), attrIO("data-test"))
+  )
+);
