@@ -83,7 +83,8 @@ const g5 = (n: number): R.Reader<Dependencies, string> =>
         /** Ask for Deps for the next function which will use it */
         R.ask<Dependencies>(),
         /** Chain the function to use the dependecy asked */
-        R.chain((deps) => f4(n > deps.lowerBound))
+        R.chain((deps) => f4(n > deps.lowerBound)),
+        a => a,
     );
 
 const h5 = (s: string): R.Reader<Dependencies, string> => g5(s.length + 1);

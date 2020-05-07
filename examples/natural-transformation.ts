@@ -3,6 +3,7 @@ import * as O from "fp-ts/lib/Option"
 import * as IO from "fp-ts/lib/IO";
 import * as E from "fp-ts/lib/Either";
 import * as T from "fp-ts/lib/Task";
+import * as RT from "fp-ts/lib/ReaderTask";
 import { flow } from "fp-ts/lib/function";
 import { pipe } from "fp-ts/lib/pipeable";
 import { Monad } from "fp-ts/lib/Monad";
@@ -13,8 +14,7 @@ const maybe1 = idToMaybe(1);
 const idToIO = <T>(x: T) => IO.io.of(x);
 const oneIO = idToIO(1);
 
-
-const eitherToTask = <E, A>(e: E.Either<E, A>): T.Task<A> => (): Promise<A> => E.fold((e: E) => Promise.reject(e), (a: A) => Promise.resolve(a))(e);
+export const eitherToTask = <E, A>(e: E.Either<E, A>): T.Task<A> => (): Promise<A> => E.fold((e: E) => Promise.reject(e), (a: A) => Promise.resolve(a))(e);
 const taskOf2 = eitherToTask(E.either.of(2));
 
 /**
