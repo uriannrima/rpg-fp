@@ -160,18 +160,17 @@ const populateAccessToken = (): RT.ReaderTask<Configuration, Configuration> => (
 const mainWithRequestAccess = (names: string[]) => pipe(
     RT.ask<Configuration>(),
     RT.chain(populateAccessToken),
-    RT.chain(
-        flow(
-            mainWithConfiguration(names),
-            t => RT.fromTask(t),
-        )
+    RT.chainTaskK(
+        mainWithConfiguration(names)
     )
 );
 
-mainWithRequestAccess(["Blind Guardian", "Masterplan", "Freedom Call", "Gamma Ray"])({
+export const runWithResource = <R>(r: R) => <A>(ma: (r: R) => A): A => ma(r);
+
+RT.run(mainWithRequestAccess(["Blind Guardian", "Masterplan", "Freedom Call", "Gamma Ray"]), {
     ...configuration,
     authorization: {
         ...configuration.authorization,
         access_token: ""
     }
-})().then(console.log).catch(console.error);
+}).then(console.log).catch(console.error);
