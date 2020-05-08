@@ -27,7 +27,7 @@ const taskOf2 = eitherToTask(E.either.of(2));
 const ioToTask = <T>(x: IO.IO<T>): T.Task<T> => (): Promise<T> => Promise.resolve(x());
 const taskOf3 = ioToTask(IO.io.of(3));
 
-const maybeToTask = <A>(a: O.Option<A>): T.Task<A> => (): Promise<A> => O.fold(() => Promise.reject(), (a: A) => Promise.resolve(a))(a);
+export const maybeToTask = <A>(a: O.Option<A>): T.Task<A> => (): Promise<A> => O.fold(() => Promise.reject(), (a: A) => Promise.resolve(a))(a);
 const taskOfName = maybeToTask(O.option.of("Richard"));
 
 const arrayToMaybe = <T>(a: T[]): O.Option<T> => O.fromNullable(a[0]);

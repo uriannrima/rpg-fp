@@ -1,16 +1,23 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { flow } from "fp-ts/lib/function";
 import * as T from "fp-ts/lib/Task"
+import * as TE from "fp-ts/lib/TaskEither"
 import * as RT from "fp-ts/lib/ReaderTask"
+import * as R from "fp-ts/lib/Reader"
 import { pipe } from "fp-ts/lib/pipeable";
 import * as E from "fp-ts/lib/Either";
 import * as A from "fp-ts/lib/Array";
 import * as SG from "fp-ts/lib/Semigroup";
+import * as IO from "fp-ts/lib/IO";
+import * as O from "fp-ts/lib/Option";
 
-import fetch from "node-fetch"
+import * as Monocle from "monocle-ts"
+
+import fetch, { Response, RequestInfo, RequestInit } from "node-fetch"
 import { URLSearchParams } from "url"
 
-import { eitherToTask } from "./natural-transformation";
+import { eitherToTask, maybeToTask } from "./natural-transformation";
+import { applyTo, indexOf } from "ramda";
 
 const httpGet = <T>(url): T.Task<T> => (): Promise<T> => fetch(url, {
     headers: {
@@ -104,11 +111,11 @@ const configuration = {
     authorization: {
         url: "https://accounts.spotify.com/api/token",
         body: {
-            client_id: "b1d45e1f83f04f688977ff1f712aba6f",
-            client_secret: "212d8d46c9454a1497adfcecdbce59d8",
+            client_id: "",
+            client_secret: "",
             grant_type: "client_credentials"
         },
-        access_token: "BQDR7wjMtBR6pEtIvZgp3ZeD6ZfUsv-nTrKng85g0hzdkEMwcj8VUqKcO9ErXaGuwY7d_sONykpAQ9CsJ_Y",
+        access_token: "",
     },
     urls: {
         search: (query: string): string => `https://api.spotify.com/v1/search?q=${query}&type=artist`,
@@ -117,9 +124,16 @@ const configuration = {
 }
 
 type Configuration = typeof configuration;
+const authorizationLens = Monocle.Lens.fromProp<Configuration>()('authorization');
+const accessTokenLens = Monocle.Lens.fromProp<typeof configuration.authorization>()('access_token');
+const bodyLens = Monocle.Lens.fromProp<typeof configuration.authorization>()('body');
+const clientIdLens = Monocle.Lens.fromProp<typeof configuration.authorization.body>()('client_id');
+const clientSecretLens = Monocle.Lens.fromProp<typeof configuration.authorization.body>()('client_secret');
 
 
 // mainWithConfiguration(["Blind Guardian", "Masterplan", "Freedom Call", "Gamma Ray"])(configuration)().then(console.log).catch(console.error);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const createAuthBody = (body: { [key: string]: string }) => {
     const params = new URLSearchParams();
@@ -127,14 +141,38 @@ const createAuthBody = (body: { [key: string]: string }) => {
     return params;
 };
 
-const httpPost = <T>(url: string, body: URLSearchParams): T.Task<T> => (): Promise<T> =>
-    fetch(url, {
-        method: 'POST',
-        body,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    }).then(r => r.json());
+const isSuccess = (status: number): boolean => /^2\d{2}$/.test(status.toString());
+
+const isSuccessResponse = <E, T>(r: Response): TE.TaskEither<E, T> => async () => {
+    const json = await r.json();
+
+    if (isSuccess(r.status)) {
+        return E.right(json as T);
+    }
+
+    return E.left(json as E);
+};
+
+const fetchTask = <E>(url: RequestInfo, init?: RequestInit): TE.TaskEither<E, Response> => async () => {
+    return fetch(url, init).then(E.right).catch(E.left);
+}
+
+const httpPost = <E, T>(url: string, body: URLSearchParams) =>
+    pipe(
+        fetchTask<E>(url, {
+            method: 'POST',
+            body,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }),
+        TE.chain(r => isSuccessResponse<E, T>(r)),
+    )
+
+interface ErrorResponse {
+    error: string;
+    error_description: string;
+}
 
 interface AuthResponse {
     access_token: string;
@@ -143,19 +181,26 @@ interface AuthResponse {
     scope: string;
 }
 
-const populateAccessToken = (): RT.ReaderTask<Configuration, Configuration> => (c: Configuration) => {
-    return pipe(
-        httpPost<AuthResponse>(c.authorization.url, createAuthBody(c.authorization.body)),
-        T.map(({ access_token }) => access_token),
-        T.map(access_token => ({
-            ...c,
-            authorization: {
-                ...c.authorization,
-                access_token
-            }
-        }))
+const tokenLens = Monocle.Lens.fromProp<{ access_token: string }>()('access_token');
+
+const setConfigurationAccessToken = (accessToken: string): (c: Configuration) => Configuration =>
+    authorizationLens
+        .compose(accessTokenLens)
+        .set(accessToken);
+
+const trace = (label: string) => <T>(x: T): T => {
+    console.log(label, x);
+    return x;
+}
+
+const populateAccessToken = (): RT.ReaderTask<Configuration, Configuration> => (c: Configuration) =>
+    pipe(
+        httpPost<ErrorResponse, AuthResponse>(c.authorization.url, createAuthBody(c.authorization.body)),
+        T.chain(eitherToTask),
+        T.map(tokenLens.get),
+        T.map(setConfigurationAccessToken),
+        T.map(applyTo(c)),
     );
-};
 
 const mainWithRequestAccess = (names: string[]) => pipe(
     RT.ask<Configuration>(),
@@ -167,10 +212,79 @@ const mainWithRequestAccess = (names: string[]) => pipe(
 
 export const runWithResource = <R>(r: R) => <A>(ma: (r: R) => A): A => ma(r);
 
-RT.run(mainWithRequestAccess(["Blind Guardian", "Masterplan", "Freedom Call", "Gamma Ray"]), {
-    ...configuration,
-    authorization: {
-        ...configuration.authorization,
-        access_token: ""
+// RT.run(mainWithRequestAccess(["Blind Guardian", "Masterplan", "Freedom Call", "Gamma Ray"]), {
+//     ...configuration,
+//     authorization: {
+//         ...configuration.authorization,
+//         access_token: ""
+//     }
+// }).then(console.log).catch(console.error);
+
+
+/////////////////////////////////////////////////////////////////
+
+const popupateClientCredentials = ({ clientId, clientSecret }: Credentials): R.Reader<Configuration, Configuration> =>
+    flow(
+        authorizationLens
+            .compose(bodyLens)
+            .compose(clientIdLens)
+            .set(clientId),
+        authorizationLens
+            .compose(bodyLens)
+            .compose(clientSecretLens)
+            .set(clientSecret),
+    );
+
+const getArgv: IO.IO<string[]> = () => process.argv;
+
+const getArgs = pipe(
+    getArgv,
+    IO.map(argv => argv.slice(2)),
+)
+
+const findArg = (argName: string) => (args: string[]): O.Option<string> => {
+    const index = args.indexOf(argName);
+
+    if (index !== -1) {
+        return O.option.of(args[index + 1]);
     }
-}).then(console.log).catch(console.error);
+
+    return O.option.zero();
+}
+
+interface Credentials {
+    clientId: string;
+    clientSecret: string;
+};
+
+const createCredentials = (clientId: string) => (clientSecret: string): Credentials => ({ clientId, clientSecret });
+
+const findCredentials = (args: string[]) => pipe(
+    O.option.of(createCredentials),
+    O.ap(findArg("--client_id")(args)),
+    O.ap(findArg("--client_secret")(args)),
+)
+
+// getCredentials :: IO Maybe Credentials
+const getCredentialsFromArgs = pipe(
+    getArgs,
+    IO.map(findCredentials),
+)
+
+const mainWithArgs = (names: string[]) => pipe(
+    RT.ask<Configuration>(),
+    RT.chainTaskK(configuration => pipe(
+        getCredentialsFromArgs, // IO Maybe Credentials
+        T.fromIO, // Task Maybe Credentials
+        T.chain(maybeToTask), // Task Credentials
+        T.map(popupateClientCredentials), // Task Configuration Configuration
+        T.map(applyTo(configuration)), // Task Configuration
+    )),
+    RT.chainTaskK(c => pipe(
+        mainWithRequestAccess(names)(c), // Task Array String
+    )),
+);
+
+mainWithArgs(["Blind Guardian", "Masterplan", "Freedom Call", "Gamma Ray"])(configuration)()
+    .then(console.log)
+    .catch(console.error);
