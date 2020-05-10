@@ -1,4 +1,4 @@
 export enum RangeType {
-  Melee = "Melee",
-  Ranged = "Ranged",
+  Melee = "melee",
+  Ranged = "ranged",
 }

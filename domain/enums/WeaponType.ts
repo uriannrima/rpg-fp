@@ -1,5 +1,5 @@
 export enum WeaponType {
-  None = "None",
-  Simple = "Simple",
-  Martial = "Martial",
+  None = "none",
+  Simple = "simple",
+  Martial = "martial",
 }

@@ -8,7 +8,7 @@ import { Skills } from "./types";
 import { createSkill } from "./creators";
 import { SkillDefinition, Skill } from "./interfaces";
 
-const definitionToSkill = (definition: SkillDefinition): Skill =>
+export const skillDefinitionToSkill = (definition: SkillDefinition): Skill =>
   createSkill({ ...definition });
 
 export const getDefaultSkills = (): Reader.Reader<
@@ -18,5 +18,5 @@ export const getDefaultSkills = (): Reader.Reader<
   flow(
     Configuration.getDefinitions,
     Configuration.getSkills,
-    Ramda.map(definitionToSkill)
+    Ramda.map(skillDefinitionToSkill)
   );

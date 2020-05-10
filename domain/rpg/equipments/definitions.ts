@@ -1,4 +1,3 @@
-import { Equipment } from "./types";
 import { ArmorType } from "../../enums/ArmorType";
 import { CostUnit } from "../../enums/CostUnit";
 import { MassUnit } from "../../enums/MassUnit";
@@ -6,6 +5,8 @@ import { EquipmentType } from "../../enums/EquipmentType";
 import { DamageType } from "../../enums/DamageType";
 import { WeaponType } from "../../enums/WeaponType";
 import { RangeType } from "../../enums/RangeType";
+
+import { Equipment } from "./types";
 
 export const EXAMPLE_EQUIPMENTS: Equipment[] = [
   {

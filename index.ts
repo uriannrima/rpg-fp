@@ -1,12 +1,12 @@
 import { createCharacter } from "./domain/character";
-import { updateAbilityScore } from "./domain/abilityScore";
+import { updateAbilityScore } from "./domain/rpg/abilityScores/abilityScore";
 import {
   setProficiencyTo,
   setProficiencyToMap,
 } from "./domain/interfaces/WithHasProficiency";
 import { SkillType, getSkills } from "./domain/rpg/skill/skill";
 import { getSavingThrows } from "./domain/savingThrow";
-import { getArmorClass } from "./domain/armorClass";
+import { getArmorClass } from "./domain/rpg/armorClass/armorClass";
 
 import { AbilityScoreType } from "./domain/enums/AbilityScoreType";
 import {

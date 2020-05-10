@@ -1,5 +1,5 @@
 export enum ArmorType {
-  Light = "Light armor",
-  Medium = "Medium armor",
-  Heavy = "Heavy armor",
+  Light = "light",
+  Medium = "medium",
+  Heavy = "heavy",
 }

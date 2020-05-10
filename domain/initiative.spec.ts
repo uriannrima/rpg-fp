@@ -1,7 +1,7 @@
 import * as assert from "assert";
 
-import { withDefaultAbilityScores } from "./abilityScore";
 import { getInitiative } from "./initiative";
+import { withDefaultAbilityScores } from "./rpg/abilityScores/withs";
 
 describe("initiative", () => {
   it("should compute initiative from WithAbilityScores", () => {
